@@ -4,23 +4,11 @@ An end-to-end deep learning project for classifying kidney CT scan images into *
 
 ---
 
-## Tech Stack
-
-![Python](https://img.shields.io/badge/Python-3.8-blue?logo=python)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange?logo=tensorflow)
-![MLflow](https://img.shields.io/badge/MLflow-2.2.2-blue?logo=mlflow)
-![DVC](https://img.shields.io/badge/DVC-Pipeline-945DD6?logo=dvc)
-![Flask](https://img.shields.io/badge/Flask-API-black?logo=flask)
-![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker)
-![AWS](https://img.shields.io/badge/AWS-ECR%20%2B%20EC2-FF9900?logo=amazonaws)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?logo=githubactions)
-
----
-
 ## Table of Contents
 
 - [Project Overview](#project-overview)
 - [Tech Stack](#tech-stack)
+- [Screenshots & Demo](#screenshots--demo)
 - [Project Structure](#project-structure)
 - [Workflows](#workflows)
 - [Getting Started](#getting-started)
@@ -59,6 +47,28 @@ An end-to-end deep learning project for classifying kidney CT scan images into *
 ![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker)
 ![AWS](https://img.shields.io/badge/AWS-ECR%20%2B%20EC2-FF9900?logo=amazonaws)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?logo=githubactions)
+
+---
+
+## Screenshots & Demo
+
+### Home Page
+
+![Home](screenshots/home.png)
+
+### Classifier — Normal Result
+
+![Normal Classification](screenshots/Classifier-normal.png)
+
+### Classifier — Tumor Result
+
+![Tumor Classification](screenshots/Classifier-tumor.png)
+
+### Full Run Demo
+
+<video src="screenshots/KidneyAI — CT Scan Classifier.mp4" controls width="100%"></video>
+
+> **Note:** If the video does not play inline, [click here to download and view it](screenshots/KidneyAI%20%E2%80%94%20CT%20Scan%20Classifier.mp4).
 
 ---
 
