@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+
+# Virtual environments
+venv/
+env/
+.env
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ML artifacts (tracked by DVC, not git)
+artifacts/
+scores.json
+
+# Logs
+logs/
+*.log
+
+# DVC cache & tmp
+.dvc/cache
+.dvc/tmp
+.dvc/__pycache__/
+
+# Uploaded images (runtime)
+inputImage.jpg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MLflow local DB
+mlflow.db
+
+# Claude Code memory (local only)
+memory/
+
+# AWS / secrets
+.env.local
+*.pem

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kidney Disease Classifier</title>
+  <!-- Modern Premium Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="family">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e1b4b 100%);
+      --card-bg: rgba(17, 24, 39, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #f43f5e;
+      --accent-glow: rgba(244, 63, 94, 0.4);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.2);
+      --error: #ef4444;
+      --error-glow: rgba(239, 68, 68, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Background glow decorations */
+    .glow-blob {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+      filter: blur(40px);
+    }
+    .glow-blob-1 { top: 10%; left: 15%; }
+    .glow-blob-2 { bottom: 10%; right: 15%; }
+
+    .container {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 40px 30px;
+      max-width: 650px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle top line accent */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      margin-bottom: 35px;
+      font-size: 1rem;
+      font-weight: 300;
+    }
+
+    .upload-area {
+      border: 2px dashed rgba(99, 102, 241, 0.3);
+      background: rgba(99, 102, 241, 0.02);
+      border-radius: 16px;
+      padding: 40px 20px;
+      margin-bottom: 24px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.05);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .upload-area input[type="file"] {
+      display: none;
+    }
+
+    .upload-label {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-main);
+      font-size: 1.05rem;
+      font-weight: 400;
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.2));
+    }
+
+    .upload-subtext {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 300;
+    }
+
+    #preview-container {
+      margin: 20px 0;
+      display: none;
+      position: relative;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    #preview-container img {
+      max-width: 100%;
+      max-height: 280px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      min-width: 160px;
+    }
+
+    .btn-predict {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-predict:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+      filter: brightness(1.1);
+    }
+
+    .btn-train {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-train:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Loading Spinner */
+    #loading {
+      display: none;
+      margin-top: 25px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    /* Result Alert Boxes */
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 14px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: none;
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+    }
+
+    .result-normal {
+      background: var(--success-glow);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.1);
+    }
+
+    .result-tumor {
+      background: var(--error-glow);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.1);
+    }
+
+    /* Animations */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 640px) {
+      .container {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Decorative background elements -->
+  <div class="glow-blob glow-blob-1"></div>
+  <div class="glow-blob glow-blob-2"></div>
+
+  <div class="container">
+    <h1>Kidney Disease Classifier</h1>
+    <p class="subtitle">Upload a CT scan image to check for abnormalities (Normal vs Tumor)</p>
+
+    <!-- Upload Box -->
+    <div class="upload-area" id="drop-zone">
+      <label for="imageUpload" class="upload-label">
+        <span class="upload-icon">✦</span>
+        <span>Drag & drop CT scan image here, or browse</span>
+        <span class="upload-subtext">Supports JPG, JPEG, PNG</span>
+      </label>
+      <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)" />
+    </div>
+
+    <!-- Preview Container -->
+    <div id="preview-container">
+      <img id="preview-img" src="" alt="CT Scan Preview" />
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="button-group">
+      <button class="btn btn-predict" onclick="predict()">
+        <span>Run Classifier</span>
+      </button>
+      <button class="btn btn-train" onclick="trainModel()">
+        <span>Retrain Pipeline</span>
+      </button>
+    </div>
+
+    <!-- Loading Stage -->
+    <div id="loading">
+      <span class="spinner"></span>
+      <span id="loading-text">Analyzing CT Scan image...</span>
+    </div>
+
+    <!-- Prediction/Training Result Display -->
+    <div id="result"></div>
+  </div>
+
+  <script>
+    let base64Image = "";
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        base64Image = e.target.result.split(",")[1];
+        document.getElementById("preview-img").src = e.target.result;
+        document.getElementById("preview-container").style.display = "block";
+        document.getElementById("result").style.display = "none";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function predict() {
+      if (!base64Image) {
+        alert("Please select or upload a CT scan image first.");
+        return;
+      }
+      setLoading(true, "Running VGG16 Deep Learning model inference...");
+      try {
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64Image }),
+        });
+        const data = await response.json();
+        
+        if (data.status === "error") {
+          showResult("Error: " + data.message, true);
+        } else {
+          const label = data[0].image;
+          showResult(label);
+        }
+      } catch (err) {
+        showResult("Error: " + err.message, true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function trainModel() {
+      setLoading(true, "Executing DVC pipeline reproduction (dvc repro)...");
+      document.getElementById("result").style.display = "none";
+      try {
+        const response = await fetch("/train", { method: "POST" });
+        const data = await response.json();
+        
+        const resultDiv = document.getElementById("result");
+        if (data.status === "success") {
+          resultDiv.textContent = data.message;
+          resultDiv.className = "result-normal";
+        } else {
+          resultDiv.textContent = "Pipeline Error: " + data.message;
+          resultDiv.className = "result-tumor";
+        }
+        resultDiv.style.display = "block";
+      } catch (err) {
+        alert("Training request failed: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function showResult(label, isError = false) {
+      const resultDiv = document.getElementById("result");
+      resultDiv.style.display = "block";
+      if (isError) {
+        resultDiv.textContent = label;
+        resultDiv.className = "result-tumor";
+        return;
+      }
+      resultDiv.textContent = `Classification Result: ${label}`;
+      resultDiv.className = label.toLowerCase() === "normal" ? "result-normal" : "result-tumor";
+    }
+
+    function setLoading(state, text = "") {
+      const loader = document.getElementById("loading");
+      const loaderText = document.getElementById("loading-text");
+      if (state) {
+        loaderText.textContent = text;
+        loader.style.display = "block";
+      } else {
+        loader.style.display = "none";
+      }
+    }
+
+    // Interactive Drag and Drop Setup
+    const dropZone = document.getElementById("drop-zone");
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = "var(--primary)";
+      dropZone.style.background = "rgba(99, 102, 241, 0.08)";
+    });
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.style.borderColor = "rgba(99, 102, 241, 0.3)";
+      dropZone.style.background = "rgba(99, 102, 241, 0.02)";
+    });
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = "rgba(99, 102, 241, 0.3)";
+      dropZone.style.background = "rgba(99, 102, 241, 0.02)";
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        previewImage({ target: { files: [file] } });
+      }
+    });
+  </script>
+</body>
+</html>
