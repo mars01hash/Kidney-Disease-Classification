@@ -12,7 +12,7 @@ class Training:
     def get_base_model(self):
         self.model = tf.keras.models.load_model(self.config.updated_base_model_path, compile=False)
         self.model.compile(
-            optimizer=tf.keras.optimizers.SGD(learning_rate=0.01),
+            optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
             loss=tf.keras.losses.CategoricalCrossentropy(),
             metrics=["accuracy"],
         )

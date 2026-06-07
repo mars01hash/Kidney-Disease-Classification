@@ -39,5 +39,16 @@ class PredictionPipeline:
             # Fallback mapping
             prediction = "Tumor" if result == 1 else "Normal"
 
-        return [{"image": prediction}]
+        probs = preds[0].tolist()
+
+        # Align probs to [normal_prob, tumor_prob] order using class_indices
+        ci = locals().get("class_indices") or {"Normal": 0, "Tumor": 1}
+        normal_idx = ci.get("Normal", 0)
+        tumor_idx  = ci.get("Tumor",  1)
+        ordered_probs = [
+            round(probs[normal_idx], 4),
+            round(probs[tumor_idx],  4),
+        ]
+
+        return [{"image": prediction, "probs": ordered_probs}]
 
